@@ -50,3 +50,20 @@ GROUP BY
     day_of_week
 ORDER BY 
     FIELD(day_of_week, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
+
+#Анализ популярности типов медиа в сообщениях
+SELECT 
+    media_type,
+    COUNT(*) AS total_count,
+    ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM private_messages), 2) AS percentage,
+    CASE 
+        WHEN COUNT(*) > 1000 THEN 'Very Popular'
+        WHEN COUNT(*) BETWEEN 500 AND 1000 THEN 'Popular'
+        ELSE 'Less Common'
+    END AS popularity_level
+FROM 
+    private_messages
+GROUP BY 
+    media_type
+ORDER BY 
+    total_count DESC;
