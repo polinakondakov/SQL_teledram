@@ -1,0 +1,52 @@
+#ЗАПРОСЫ
+
+#Количество пользователей по языкам интерфейса
+SELECT 
+    LANGUAGE AS interface_language,
+    COUNT(*) AS users_count
+FROM 
+    user_settings
+GROUP BY 
+    LANGUAGE
+ORDER BY 
+    users_count DESC;
+
+#Среднее количество участников в группах
+SELECT 
+    AVG(member_count) AS avg_members_per_group
+FROM (
+    SELECT 
+        g.id,
+        COUNT(gm.user_id) AS member_count
+    FROM 
+        `groups` g
+    LEFT JOIN 
+        group_members gm ON g.id = gm.group_id
+    GROUP BY 
+        g.id
+) AS group_member_counts;
+
+#Самые популярные реакции на сообщения 
+SELECT 
+    rl.code AS reaction,
+    COUNT(*) AS usage_count
+FROM 
+    private_message_reactions pmr
+JOIN 
+    reactions_list rl ON pmr.reaction_id = rl.id
+GROUP BY 
+    rl.code
+ORDER BY 
+    usage_count DESC
+LIMIT 5;
+
+#Количество сториз по дням недели
+SELECT 
+    DAYNAME(created_at) AS day_of_week,
+    COUNT(*) AS stories_count
+FROM 
+    stories
+GROUP BY 
+    day_of_week
+ORDER BY 
+    FIELD(day_of_week, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
